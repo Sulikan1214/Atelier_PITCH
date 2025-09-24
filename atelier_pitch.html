@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maîtriser son Pitch de Présentation - Atelier PLS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+        }
+
+        /* Particules flottantes */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 10;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            z-index: 10;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .title-slide {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .title-slide .slide-title {
+            color: white;
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .title-slide .slide-subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.8em;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        /* Style pour les slides de contenu */
+        .content-slide {
+            max-width: 900px;
+            width: 90%;
+            margin: 0 auto;
+            text-align: center;
+            color: white;
+            padding: 20px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .content-title {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #fbbf24;
+        }
+
+        .content-section {
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            text-align: left;
+        }
+
+        .content-section h3 {
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            color: #fbbf24;
+            text-align: center;
+        }
+
+        .content-section p, .content-section li {
+            font-size: 1em;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .pitch-example {
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border-left: 4px solid #fbbf24;
+            font-style: italic;
+        }
+
+        .pitch-example strong {
+            color: #667eea;
+        }
+
+        .structure-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .structure-item {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+
+        .structure-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        .structure-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #fbbf24;
+            margin-bottom: 10px;
+        }
+
+        .structure-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .structure-desc {
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Style carte mentale */
+        .mindmap-container {
+            width: 100%;
+            height: 80%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .question-title {
+            font-size: 1.8em;
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: bold;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            animation: slideDown 0.8s ease-out;
+            position: relative;
+            z-index: 20;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Nœud central */
+        .central-question {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 30px;
+            width: 320px;
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4em;
+            font-weight: 600;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            z-index: 15;
+            animation: scaleIn 1s ease-out 0.3s both;
+            transition: all 0.3s ease;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .central-question:hover {
+            transform: translate(-50%, -50%) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        /* Bulles */
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 25px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            z-index: 10;
+            min-width: 220px;
+            max-width: 320px;
+            min-height: 80px;
+        }
+
+        .bubble:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        .bubble.expanded {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(25px);
+            transform: translateY(-10px) scale(1.05);
+            z-index: 20;
+            max-width: 400px;
+            min-height: auto;
+            color: #333;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .bubble-header {
+            font-weight: 700;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            text-align: center;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .bubble.expanded .bubble-header {
+            color: #333;
+            text-shadow: none;
+        }
+
+        .bubble-content {
+            display: none;
+            font-size: 1em;
+            line-height: 1.6;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.95);
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .bubble.expanded .bubble-content {
+            display: block;
+            color: #333;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bullet-point {
+            margin: 12px 0;
+            padding-left: 20px;
+            position: relative;
+            font-size: 0.95em;
+        }
+
+        .bullet-point::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .bubble.expanded .bullet-point::before {
+            color: #667eea;
+        }
+
+        .example-box {
+            background: rgba(99, 102, 241, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-style: italic;
+            border-left: 3px solid #667eea;
+            font-size: 0.85em;
+        }
+
+        /* Positionnement des bulles */
+        .objective-bubble {
+            top: 15%;
+            left: 5%;
+            animation: slideInLeft 1s ease-out 0.6s both;
+        }
+
+        .good-bubble {
+            top: 15%;
+            right: 5%;
+            animation: slideInRight 1s ease-out 0.8s both;
+        }
+
+        .bad-bubble {
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: slideInUp 1s ease-out 1s both;
+        }
+
+        .info-bubble {
+            top: 50%;
+            left: 2%;
+            transform: translateY(-50%);
+            animation: slideInLeft 1s ease-out 1.2s both;
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(100px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        /* Lignes de connexion */
+        .connection-line {
+            position: absolute;
+            background: linear-gradient(45deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1));
+            height: 2px;
+            z-index: 5;
+            opacity: 0;
+            animation: drawLine 0.8s ease-out 1.2s both;
+        }
+
+        @keyframes drawLine {
+            from { opacity: 0; transform: scaleX(0); }
+            to { opacity: 0.4; transform: scaleX(1); }
+        }
+
+        .line-objective {
+            width: 120px;
+            top: 35%;
+            left: 25%;
+            transform: rotate(-20deg);
+            transform-origin: left center;
+        }
+
+        .line-good {
+            width: 120px;
+            top: 35%;
+            right: 25%;
+            transform: rotate(20deg);
+            transform-origin: right center;
+        }
+
+        .line-bad {
+            width: 100px;
+            bottom: 25%;
+            left: 50%;
+            transform: translateX(-50%) rotate(90deg);
+        }
+
+        .line-info {
+            width: 100px;
+            top: 50%;
+            left: 15%;
+            transform: translateY(-50%);
+        }
+
+        /* Contrôles de présentation */
+        .presentation-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* Navigation */
+        .navigation {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            background: rgba(255, 255, 255, 0.05);
+            cursor: not-allowed;
+            transform: none;
+            opacity: 0.5;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 1.1em;
+            z-index: 1000;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .central-question {
+                width: 260px;
+                height: 110px;
+                font-size: 1.2em;
+            }
+            
+            .bubble {
+                min-width: 180px;
+                max-width: 280px;
+                font-size: 0.9em;
+                padding: 20px;
+            }
+            
+            .bubble.expanded {
+                max-width: 320px;
+            }
+            
+            .objective-bubble {
+                top: 12%;
+                left: 3%;
+            }
+            
+            .good-bubble {
+                top: 12%;
+                right: 3%;
+            }
+            
+            .bad-bubble {
+                bottom: 8%;
+            }
+
+            .info-bubble {
+                display: none;
+            }
+
+            .structure-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navigation {
+                bottom: 10px;
+                right: 10px;
+                gap: 10px;
+            }
+
+            .nav-btn {
+                padding: 8px 16px;
+                font-size: 0.9em;
+            }
+        }
+
+        /* Styles pour les listes */
+        .tip-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tip-list li {
+            margin: 10px 0;
+            padding-left: 25px;
+            position: relative;
+            color: white;
+        }
+
+        .tip-list li::before {
+            content: "💡";
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .error-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .error-list li {
+            margin: 10px 0;
+            padding-left: 25px;
+            position: relative;
+            color: white;
+        }
+
+        .error-list li::before {
+            content: "❌";
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .success-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .success-list li {
+            margin: 10px 0;
+            padding-left: 25px;
+            position: relative;
+            color: white;
+        }
+
+        .success-list li::before {
+            content: "✅";
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+    
+        /* --- Overrides to match 'atelier_competences' (simple) --- */
+        .structure-grid .bubble {
+            position: relative !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            min-height: auto !important;
+            margin: 8px 0 !important;
+        }
+        .structure-grid .bubble:hover {
+            transform: translateY(-2px) scale(1.01) !important;
+        }
+        .pitch-example.bubble {
+            background: rgba(255, 255, 255, 0.95) !important;
+            color: #333 !important;
+            border-left: 4px solid #fbbf24 !important;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.08) !important;
+        }
+        .bubble .bubble-content {
+            display: none !important;
+            max-height: none !important;
+            opacity: 1 !important;
+            overflow: visible !important;
+            transition: none !important;
+        }
+        .bubble.expanded .bubble-content {
+            display: block !important;
+        }
+
+    
+        /* --- Layout fix: any bubble inside content should be flow-based, not absolute --- */
+        .content-section .bubble,
+        .content-slide .bubble,
+        .pitch-example.bubble {
+            position: relative !important;
+            left: auto !important;
+            top: auto !important;
+            transform: none !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            min-height: auto !important;
+            margin: 10px 0 !important;
+        }
+        .content-section .bubble:hover,
+        .content-slide .bubble:hover,
+        .pitch-example.bubble:hover {
+            transform: translateY(-2px) scale(1.01) !important;
+        }
+        /* Harmonize headers like 'Compétences' */
+        .bubble-header { color: #ffffff !important; text-shadow: 0 2px 10px rgba(0,0,0,.3) !important; }
+        .bubble.expanded .bubble-header { color: #333 !important; text-shadow: none !important; }
+        .bubble-content { color: rgba(255,255,255,.95) !important; }
+        .bubble.expanded .bubble-content { color: #333 !important; }
+
+    
+        /* --- Pitch examples: violet look (not white), collapsed & expanded --- */
+        .pitch-example.bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: #ffffff !important;
+            border-left: none !important;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.18) !important;
+        }
+        .pitch-example.bubble:hover {
+            transform: translateY(-2px) scale(1.01) !important;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.22) !important;
+        }
+        .pitch-example.bubble .bubble-header {
+            color: #ffffff !important;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.25) !important;
+        }
+        .pitch-example.bubble .bubble-content {
+            color: rgba(255,255,255,0.98) !important;
+        }
+        /* Keep violet when expanded as well */
+        .pitch-example.bubble.expanded {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: #ffffff !important;
+            border: 1px solid rgba(255,255,255,0.25) !important;
+            transform: translateY(-4px) scale(1.03) !important;
+        }
+        .pitch-example.bubble.expanded .bubble-header {
+            color: #ffffff !important;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.25) !important;
+        }
+        .pitch-example.bubble.expanded .bubble-content {
+            color: rgba(255,255,255,0.98) !important;
+        }
+        /* Ensure bullets contrast on violet background */
+        .pitch-example.bubble .bullet-point::before {
+            color: #ffffff !important;
+        }
+
+    
+        /* --- Exemples: fond BLANC (au lieu de violet), en fermé et ouvert --- */
+        .pitch-example.bubble {
+            background: #ffffff !important;
+            color: #333 !important;
+            border: 1px solid rgba(0,0,0,0.06) !important;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.10) !important;
+        }
+        .pitch-example.bubble:hover {
+            transform: translateY(-2px) scale(1.01) !important;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.14) !important;
+        }
+        .pitch-example.bubble .bubble-header {
+            color: #333 !important;
+            text-shadow: none !important;
+        }
+        .pitch-example.bubble .bubble-content {
+            color: #333 !important;
+        }
+        .pitch-example.bubble.expanded {
+            background: #ffffff !important;
+            color: #333 !important;
+            border: 1px solid rgba(0,0,0,0.08) !important;
+            transform: translateY(-2px) scale(1.01) !important;
+        }
+        .pitch-example.bubble.expanded .bubble-header {
+            color: #333 !important;
+            text-shadow: none !important;
+        }
+        .pitch-example.bubble.expanded .bubble-content {
+            color: #333 !important;
+        }
+        /* Flèches sur fond blanc : violet pour cohérence visuelle */
+        .pitch-example.bubble .bullet-point::before {
+            color: #667eea !important;
+        }
+
+    
+/* === CREPI logo === */
+.crepi-logo{
+    position:fixed; top:20px; left:20px; height:55px;
+    padding:8px; background:rgba(255,255,255,0.85);
+    border-radius:15px; box-shadow:0 4px 12px rgba(0,0,0,0.15);
+    z-index:2000; opacity:.95;
+    transition:transform .25s ease, opacity .25s ease, background .25s ease;
+}
+.crepi-logo:hover{ transform:scale(1.08); opacity:1; background:#fff; }
+@media(max-width:768px){ .crepi-logo{ height:40px; top:10px; left:10px; padding:6px; }}
+
+/* === Popup carte de visite === */
+.crepi-card{
+    position:fixed; top:20px; left:90px; min-width:240px; max-width:300px;
+    background:#fff; color:#111; border-radius:14px; border:1px solid rgba(0,0,0,.08);
+    box-shadow:0 16px 40px rgba(0,0,0,.18); padding:12px 14px; z-index:3000;
+    display:none;
+}
+.crepi-card.visible{ display:block !important; }
+.crepi-card-header{ font-weight:800; font-size:1.05em; margin-bottom:6px; }
+.crepi-card-body{ font-size:.95em; line-height:1.5; }
+.crepi-card a{ color:#2563eb; text-decoration:none; } .crepi-card a:hover{ text-decoration:underline; }
+.crepi-card-sep{ height:1px; background:rgba(0,0,0,.08); margin:8px 0; }
+
+</style>
+</head>
+<body>
+<img alt="Logo CREPI" class="crepi-logo" src="images/640px-Logo_Fédération_Nationale_des_CREPI_-_2_couleurs.jpg"/>
+<div class="crepi-card" id="crepi-card">
+  <div class="crepi-card-header">CREPI Pyrénées</div>
+  <div class="crepi-card-body">
+    <div>5 chemin du Bac</div>
+    <div>64230 Lescar</div>
+    <div class="crepi-card-sep"></div>
+    <div>Philippe Yvorra</div>
+    <div><a href="mailto:philippe.yvorra@crepyrenees.com">philippe.yvorra@crepyrenees.com</a></div>
+    <div><a href="tel:+33607013208">06 07 01 32 08</a></div>
+  </div>
+</div>
+
+    <div class="particles" id="particles"></div>
+    
+    <div class="presentation-container">
+        <!-- Slide 1: Page de titre -->
+        <div class="slide active title-slide">
+            <div class="slide-header">
+                <h1 class="slide-title">Maîtriser son Pitch de Présentation</h1>
+                <p class="slide-subtitle">Entretien • Job Dating • Networking</p>
+                <p style="margin-top: 30px; font-size: 1.2em;">Atelier Formation Professionnelle • Style PLS</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Qu'est-ce qu'un pitch -->
+        <div class="slide">
+            <div class="content-slide">
+                <h1 class="content-title">🎯 Qu'est-ce qu'un Pitch de Présentation ?</h1>
+                
+                <div class="content-section">
+                    <h3>📋 Définition</h3>
+                    <p><strong>Le pitch = Votre carte de visite orale</strong></p>
+                    <p>Présentation concise et percutante de votre profil professionnel en 30 secondes à 2 minutes maximum.</p>
+                </div>
+
+                <div class="structure-grid">
+                    <div class="structure-item">
+                        <div class="structure-number">30s</div>
+                        <div class="structure-title">Job Dating</div>
+                        <div class="structure-desc">Version ultra-courte pour retenir l'attention</div>
+                    </div>
+                    <div class="structure-item">
+                        <div class="structure-number">1min</div>
+                        <div class="structure-title">Entretien</div>
+                        <div class="structure-desc">Version standard pour "Parlez-moi de vous"</div>
+                    </div>
+                    <div class="structure-item">
+                        <div class="structure-number">2min</div>
+                        <div class="structure-title">Networking</div>
+                        <div class="structure-desc">Version développée avec exemples concrets</div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <h3>🎯 Objectifs du pitch</h3>
+                    <ul class="success-list">
+                        <li>Créer une première impression positive et mémorable</li>
+                        <li>Susciter l'intérêt et l'envie d'en savoir plus</li>
+                        <li>Démontrer votre valeur ajoutée en quelques phrases</li>
+                        <li>Orienter la conversation vers vos points forts</li>
+                    </ul>
+                </div>
+
+                <div class="pitch-example">
+                    <strong>Exemple concret :</strong><br>
+                    "Bonjour, je suis Marie, assistante administrative avec 3 ans d'expérience. Je me spécialise dans l'organisation et la gestion multi-tâches. Dans mon dernier poste, j'ai amélioré l'efficacité du service de 30% en digitalisant les processus. Je cherche un poste où je peux apporter mes compétences en organisation et mon goût du contact client."
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Structure du pitch parfait -->
+        <div class="slide">
+            <div class="content-slide">
+                <h1 class="content-title">🏗️ La Structure du Pitch Parfait</h1>
+                
+                <div class="structure-grid">
+                    <div class="structure-item">
+                        <div class="structure-number">1</div>
+                        <div class="structure-title">QUI</div>
+                        <div class="structure-desc">Nom + fonction/métier<br><em>"Je suis..."</em></div>
+                    </div>
+                    <div class="structure-item">
+                        <div class="structure-number">2</div>
+                        <div class="structure-title">EXPÉRIENCE</div>
+                        <div class="structure-desc">Années + domaine<br><em>"...avec X ans d'expérience en..."</em></div>
+                    </div>
+                    <div class="structure-item">
+                        <div class="structure-number">3</div>
+                        <div class="structure-title">SPÉCIALITÉ</div>
+                        <div class="structure-desc">Compétences clés<br><em>"Spécialisé(e) dans..."</em></div>
+                    </div>
+                    <div class="structure-item">
+                        <div class="structure-number">4</div>
+                        <div class="structure-title">RÉALISATION</div>
+                        <div class="structure-desc">Résultat chiffré<br><em>"J'ai permis/obtenu..."</em></div>
+                    </div>
+                    <div class="structure-item">
+                        <div class="structure-number">5</div>
+                        <div class="structure-title">OBJECTIF</div>
+                        <div class="structure-desc">Ce que vous cherchez<br><em>"Je recherche..."</em></div>
+                    </div>
+                    <div class="structure-item">
+                        <div class="structure-number">6</div>
+                        <div class="structure-title">VALEUR</div>
+                        <div class="structure-desc">Ce que vous apportez<br><em>"Pour apporter..."</em></div>
+                    </div>
+                </div>
+
+                <div class="pitch-example">
+                    <strong>Exemple appliqué :</strong><br>
+                    <strong>1. QUI :</strong> "Je suis Pierre, comptable"<br>
+                    <strong>2. EXPÉRIENCE :</strong> "avec 5 ans d'expérience en cabinet"<br>
+                    <strong>3. SPÉCIALITÉ :</strong> "spécialisé dans la comptabilité des PME"<br>
+                    <strong>4. RÉALISATION :</strong> "J'ai optimisé la gestion de 40 dossiers clients"<br>
+                    <strong>5. OBJECTIF :</strong> "Je recherche un poste en entreprise"<br>
+                    <strong>6. VALEUR :</strong> "pour apporter ma rigueur et mon expertise en gestion financière."
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Exemples de pitch par profil -->
+        <div class="slide">
+            <div class="content-slide">
+                <h1 class="content-title">👥 Exemples de Pitch par Profil</h1>
+                
+                <div class="content-section">
+                    <h3>🔰 DÉBUTANT - Secrétaire Administrative</h3>
+                    <div class="pitch-example">
+                        "Bonjour, je suis Sophie, jeune diplômée d'un BTS Assistant de Gestion. Bien que débutante, j'ai acquis une solide expérience lors de mes stages, notamment en gestion d'agenda et accueil client. J'ai d'ailleurs contribué à améliorer l'organisation du service lors de mon dernier stage. Je recherche un premier poste d'assistante administrative pour mettre en pratique mes compétences en organisation et développer mon expertise du secteur."
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <h3>⭐ EXPÉRIMENTÉ - Technicien de Maintenance</h3>
+                    <div class="pitch-example">
+                        "Je suis Laurent, technicien de maintenance industrielle avec 8 ans d'expérience dans l'automobile. Je me spécialise dans la maintenance préventive et la résolution de pannes complexes. Dans mon poste actuel, j'ai réduit les temps d'arrêt de 25% grâce à un nouveau planning de maintenance. Je souhaite évoluer vers un poste de responsable d'équipe pour transmettre mon savoir-faire et optimiser les processus à plus grande échelle."
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <h3>🔄 RECONVERSION - Vers Commercial</h3>
+                    <div class="pitch-example">
+                        "Je suis Martine, actuellement assistante RH depuis 10 ans, et je souhaite me reconvertir dans le commercial. Mon expérience m'a permis de développer d'excellentes qualités relationnelles et une vraie compréhension des besoins clients internes. J'ai d'ailleurs mené plusieurs projets de communication qui ont amélioré la satisfaction des collaborateurs de 20%. Je recherche un poste de commerciale où je peux utiliser mon sens du relationnel et ma capacité d'écoute pour développer un portefeuille clients."
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Techniques de formulation -->
+        <div class="slide">
+            <h1 class="question-title">Techniques de Formulation</h1>
+            <div class="mindmap-container">
+                <div class="connection-line line-objective"></div>
+                <div class="connection-line line-good"></div>
+                <div class="connection-line line-bad"></div>
+                
+                <div class="central-question">Techniques de Formulation</div>
+                
+                <div class="bubble objective-bubble" onclick="toggleBubble(this)">
+                    <div class="bubble-header">🎯 Mots-clés puissants</div>
+                    <div class="bubble-content">
+                        <div class="bullet-point">Verbes d'action : "J'ai optimisé", "J'ai développé"</div>
+                        <div class="bullet-point">Adjectifs valorisants : "efficace", "polyvalent", "rigoureux"</div>
+                        <div class="bullet-point">Éviter : "je pense", "j'essaie", "peut-être"</div>
+                        <div class="example-box">
+                            <strong>Au lieu de :</strong> "Je pense être assez organisé"<br>
+                            <strong>Dire :</strong> "Je suis reconnu pour mon organisation"
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bubble good-bubble" onclick="toggleBubble(this)">
+                    <div class="bubble-header">✅ Règles d'or</div>
+                    <div class="bubble-content">
+                        <div class="bullet-point">Toujours inclure un chiffre ou un résultat concret</div>
+                        <div class="bullet-point">Utiliser le présent et le passé composé</div>
+                        <div class="bullet-point">S'adapter au vocabulaire de l'entreprise</div>
+                        <div class="example-box">
+                            <strong>Bon exemple :</strong><br>
+                            "J'ai augmenté la satisfaction client de 15% en réorganisant l'accueil"
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bubble bad-bubble" onclick="toggleBubble(this)">
+                    <div class="bubble-header">❌ Pièges à éviter</div>
+                    <div class="bubble-content">
+                        <div class="bullet-point">Réciter son CV dans l'ordre chronologique</div>
+                        <div class="bullet-point">Utiliser un jargon trop technique</div>
+                        <div class="bullet-point">Parler de ses faiblesses ou échecs</div>
+                        <div class="example-box">
+                            <strong>À éviter :</strong><br>
+                            "J'ai fait ci, puis ça, après j'ai travaillé là..."<br>
+                            "Je ne suis pas très bon en..."
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Adaptation selon le contexte -->
+        <div class="slide">
+            <h1 class="question-title">Adaptation selon le Contexte</h1>
+            <div class="mindmap-container">
+                <div class="connection-line line-objective"></div>
+                <div class="connection-line line-good"></div>
+                <div class="connection-line line-bad"></div>
+                <div class="connection-line line-info"></div>
+                
+                <div class="central-question">Adaptation selon le Contexte</div>
+                
+                <div class="bubble objective-bubble" onclick="toggleBubble(this)">
+                    <div class="bubble-header">💼 Entretien individuel</div>
+                    <div class="bubble-content">
+                        <div class="bullet-point">Version de 60-90 secondes</div>
+                        <div class="bullet-point">Insister sur l'adéquation avec le poste</div>
+                        <div class="bullet-point">Inclure une question en fin</div>
+                        <div class="example-box">
+                            <strong>Fin de pitch :</strong><br>
+                            "...J'aimerais savoir quels sont les principaux défis de ce poste ?"
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bubble good-bubble" onclick="toggleBubble(this)">
+                    <div class="bubble-header">👥 Job Dating</div>
+                    <div class="bubble-content">
+                        <div class="bullet-point">Version de 30 secondes maximum</div>
+                        <div class="bullet-point">Aller à l'essentiel : qui, quoi, pourquoi</div>
+                        <div class="bullet-point">Finir par une demande de contact</div>
+                        <div class="example-box">
+                            <strong>Version courte :</strong><br>
+                            "Je suis Paul, comptable 3 ans d'expérience, spécialisé PME. J'ai optimisé la gestion de 30 dossiers. Puis-je vous laisser mes coordonnées ?"
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bubble bad-bubble" onclick="toggleBubble(this)">
+                    <div class="bubble-header">🌐 Networking/Salon</div>
+                    <div class="bubble-content">
+                        <div class="bullet-point">Version conversationnelle de 90-120 secondes</div>
+                        <div class="bullet-point">Inclure une anecdote ou exemple concret</div>
+                        <div class="bullet-point">Poser des questions sur leur activité</div>
+                        <div class="example-box">
+                            <strong>Approche networking :</strong><br>
+                            "[Pitch] Et vous, quels sont les enjeux actuels de votre secteur ?"
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bubble info-bubble" onclick="toggleBubble(this)">
+                    <div class="bubble-header">💡 Conseil pro</div>
+                    <div class="bubble-content">
+                        <div class="bullet-point">Préparez 3 versions : 30s, 1min, 2min</div>
+                        <div class="bullet-point">Adaptez le vocabulaire au secteur</div>
+                        <div class="bullet-point">Entraînez-vous devant un miroir</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Erreurs fréquentes -->
+        <div class="slide">
+            <h1 class="question-title">Erreurs Fréquentes à Éviter</h1>
+            <div class="mindmap-container">
+                <div class="connection-line line-objective"></div>
+                <div class="connection-line line-good"></div>
+                <div class="connection-line line-bad"></div>
+                
+                <div class="central-question">Erreurs Fréquentes</div>
+                
+                <div class="bubble objective-bubble" onclick="toggleBubble(this)">
+                    <div class="bubble-header">⏱️ Problèmes de timing</div>
+                    <div class="bubble-content">
+                        <div class="bullet-point">Pitch trop long qui endort le recruteur</div>
+                        <div class="bullet-point">Débit trop rapide par stress</div>
+                        <div class="bullet-point">Oublier de respirer et marquer des pauses</div>
+                        <div class="example-box">
+                            <strong>Solution :</strong><br>
+                            Chronométrez-vous et marquez les pauses sur votre script
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bubble good-bubble" onclick="toggleBubble(this)">
+                    <div class="bubble-header">📚 Erreurs de contenu</div>
+                    <div class="bubble-content">
+                        <div class="bullet-point">Réciter son CV chronologiquement</div>
+                        <div class="bullet-point">Donner trop de détails techniques</div>
+                        <div class="bullet-point">Oublier de mentionner ses réalisations</div>
+                        <div class="example-box">
+                            <strong>Mauvais exemple :</strong><br>
+                            "En 2020 j'ai travaillé chez X, puis en 2022 chez Y, maintenant je fais Z..."
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bubble bad-bubble" onclick="toggleBubble(this)">
+                    <div class="bubble-header">🗣️ Erreurs de communication</div>
+                    <div class="bubble-content">
+                        <div class="bullet-point">Manque de conviction et d'enthousiasme</div>
+                        <div class="bullet-point">Éviter le regard et parler trop bas</div>
+                        <div class="bullet-point">Attitude défensive ou négative</div>
+                        <div class="example-box">
+                            <strong>À éviter :</strong><br>
+                            "Je ne suis pas sûr mais...", "Ce n'est peut-être pas parfait mais..."
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Préparation et entraînement -->
+        <div class="slide">
+            <div class="content-slide">
+                <h1 class="content-title">🏋️ Préparation et Entraînement</h1>
+                
+                <div class="content-section">
+                    <h3>📝 Étapes de préparation</h3>
+                    <ul class="tip-list">
+                        <li>Listez vos 3 plus grandes réalisations avec chiffres</li>
+                        <li>Identifiez vos 3 compétences clés les plus recherchées</li>
+                        <li>Rédigez 3 versions : courte, standard, développée</li>
+                        <li>Adaptez le vocabulaire au secteur visé</li>
+                        <li>Préparez une phrase d'accroche mémorable</li>
+                    </ul>
+                </div>
+
+                <div class="content-section">
+                    <h3>🎭 Techniques d'entraînement</h3>
+                    <ul class="success-list">
+                        <li>Enregistrez-vous en vidéo pour corriger votre posture</li>
+                        <li>Répétez devant un miroir pour travailler le regard</li>
+                        <li>Chronométrez-vous pour respecter les temps</li>
+                        <li>Testez avec des proches et demandez des retours</li>
+                        <li>Variez les situations : debout, assis, avec interruption</li>
+                    </ul>
+                </div>
+
+                <div class="content-section">
+                    <h3>✅ Checklist avant entretien</h3>
+                    <div class="structure-grid">
+                        <div class="structure-item">
+                            <div class="structure-title">CONTENU</div>
+                            <div class="structure-desc">☑️ Structure claire<br>☑️ Chiffres inclus<br>☑️ Valeur ajoutée exprimée</div>
+                        </div>
+                        <div class="structure-item">
+                            <div class="structure-title">FORME</div>
+                            <div class="structure-desc">☑️ Débit adapté<br>☑️ Pauses marquées<br>☑️ Timing respecté</div>
+                        </div>
+                        <div class="structure-item">
+                            <div class="structure-title">ATTITUDE</div>
+                            <div class="structure-desc">☑️ Posture droite<br>☑️ Regard direct<br>☑️ Sourire naturel</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pitch-example">
+                    <strong>Exercice pratique :</strong><br>
+                    Rédigez votre pitch en complétant : "Je suis [nom + fonction], avec [X ans] d'expérience en [domaine]. Je me spécialise dans [compétence clé]. J'ai [réalisation chiffrée]. Je recherche [objectif] pour apporter [valeur ajoutée]."
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Conclusion -->
+        <div class="slide title-slide">
+            <div class="slide-header">
+                <h1 class="slide-title" style="font-size: 3em;">À Retenir</h1>
+                <p class="slide-subtitle" style="font-size: 1.5em; margin-top: 40px;">
+                    Les Clés d'un Pitch Réussi
+                </p>
+                <div style="margin-top: 50px; font-size: 1.2em; line-height: 1.8;">
+                    <p>🏗️ <strong>Structure</strong> : QUI + EXPÉRIENCE + SPÉCIALITÉ + RÉALISATION + OBJECTIF + VALEUR</p>
+                    <p>⏱️ <strong>Timing</strong> : 30s (job dating) - 1min (entretien) - 2min (networking)</p>
+                    <p>💪 <strong>Impact</strong> : Chiffres, verbes d'action, conviction</p>
+                    <p>🎯 <strong>Adaptation</strong> : Personnalisez selon le contexte et l'entreprise</p>
+                    <p>🏋️ <strong>Entraînement</strong> : Répétez jusqu'à la maîtrise parfaite</p>
+                </div>
+                <p style="margin-top: 60px; font-size: 1.4em; font-weight: bold; color: #fbbf24;">
+                    Votre pitch = Votre première opportunité de briller ! ✨
+                </p>
+            </div>
+        </div>
+
+        <!-- Contrôles de présentation -->
+        <div class="presentation-controls">
+            <button class="control-btn" onclick="toggleFullscreen()" id="fullscreenBtn">📺 Plein écran</button>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button class="nav-btn" onclick="previousSlide()" id="prevBtn">← Précédent</button>
+            <button class="nav-btn" onclick="nextSlide()" id="nextBtn">Suivant →</button>
+        </div>
+        
+        <div class="slide-counter" id="slideCounter">1 / 9</div>
+    </div>
+
+    <script>
+        // Création des particules flottantes
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 15;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                const size = Math.random() * 4 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = n;
+            
+            if (currentSlide >= totalSlides) currentSlide = 0;
+            if (currentSlide < 0) currentSlide = totalSlides - 1;
+            
+            slides[currentSlide].classList.add('active');
+            updateNavigation();
+            updateCounter();
+            
+            // Reset all bubbles when changing slide
+            const bubbles = slides[currentSlide].querySelectorAll('.bubble');
+            bubbles.forEach(bubble => {
+                bubble.classList.remove('expanded');
+            });
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        function updateNavigation() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === totalSlides - 1;
+        }
+
+        function updateCounter() {
+            document.getElementById('slideCounter').textContent = `${currentSlide + 1} / ${totalSlides}`;
+        }
+
+        function toggleBubble(bubble) {
+            // Close all other bubbles in the current slide
+            const currentSlideBubbles = slides[currentSlide].querySelectorAll('.bubble');
+            currentSlideBubbles.forEach(b => {
+                if (b !== bubble) {
+                    b.classList.remove('expanded');
+                }
+            });
+            
+            // Toggle the clicked bubble
+            bubble.classList.toggle('expanded');
+        }
+
+        // Fonction plein écran
+        function toggleFullscreen() {
+            const elem = document.documentElement;
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            
+            if (!document.fullscreenElement) {
+                elem.requestFullscreen().then(() => {
+                    fullscreenBtn.textContent = '🪟 Sortir plein écran';
+                }).catch(err => {
+                    console.log('Erreur plein écran:', err);
+                });
+            } else {
+                document.exitFullscreen().then(() => {
+                    fullscreenBtn.textContent = '📺 Plein écran';
+                });
+            }
+        }
+
+        // Écouter les changements de plein écran
+        document.addEventListener('fullscreenchange', () => {
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            if (!document.fullscreenElement) {
+                fullscreenBtn.textContent = '📺 Plein écran';
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                if (currentSlide < totalSlides - 1) {
+                    nextSlide();
+                }
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                if (currentSlide > 0) {
+                    previousSlide();
+                }
+            } else if (e.key === 'Escape') {
+                // Close all expanded bubbles
+                const bubbles = slides[currentSlide].querySelectorAll('.bubble');
+                bubbles.forEach(bubble => {
+                    bubble.classList.remove('expanded');
+                });
+                
+                // Exit fullscreen if active
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                }
+            } else if (e.key === 'f' || e.key === 'F') {
+                // Toggle fullscreen with F key
+                e.preventDefault();
+                toggleFullscreen();
+            }
+        });
+
+        
+        // --- Convert all structure cards into clickable bubbles & make pitch examples collapsible ---
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.structure-grid .structure-item').forEach(item => {
+                if (item.classList.contains('bubble')) return;
+                const num = item.querySelector('.structure-number');
+                const title = item.querySelector('.structure-title');
+                const desc = item.querySelector('.structure-desc');
+                const numText = num ? num.textContent.trim() : '';
+                const titleText = title ? title.textContent.trim() : '';
+                const descHTML = desc ? desc.innerHTML : '';
+                item.classList.add('bubble');
+                item.setAttribute('onclick', 'toggleBubble(this)');
+                item.innerHTML = '';
+                const header = document.createElement('div');
+                header.className = 'bubble-header';
+                header.textContent = (numText ? numText + ' — ' : '') + titleText;
+                const content = document.createElement('div');
+                content.className = 'bubble-content';
+                content.innerHTML = descHTML;
+                item.appendChild(header);
+                item.appendChild(content);
+            });
+            document.querySelectorAll('.pitch-example').forEach(ex => {
+                if (ex.classList.contains('bubble')) return;
+                let headerText = '💡 Exemple';
+                const strong = ex.querySelector('strong');
+                if (strong) {
+                    headerText = strong.textContent.trim();
+                    const next = strong.nextSibling;
+                    strong.remove();
+                    if (next && next.nodeType === Node.ELEMENT_NODE && next.tagName === 'BR') {
+                        next.remove();
+                    }
+                }
+                const contentHTML = ex.innerHTML;
+                ex.classList.add('bubble');
+                ex.setAttribute('onclick', 'toggleBubble(this)');
+                ex.innerHTML = '';
+                const header = document.createElement('div');
+                header.className = 'bubble-header';
+                header.textContent = headerText;
+                const content = document.createElement('div');
+                content.className = 'bubble-content';
+                content.innerHTML = contentHTML;
+                ex.appendChild(header);
+                ex.appendChild(content);
+            });
+        });
+
+        // Initialize
+        createParticles();
+        updateNavigation();
+        updateCounter();
+
+        console.log(`Atelier Pitch PLS - ${totalSlides} slides - Formation professionnelle`);
+    </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  const logo = document.querySelector('.crepi-logo');
+  const card = document.getElementById('crepi-card');
+  if(logo && card){
+    logo.addEventListener('click', () => {
+      card.classList.toggle('visible');
+    });
+  }
+});
+</script>
+
+</body>
+</html>
